@@ -4,17 +4,17 @@ export const cafes: Cafe[] = [
     {
         id: 1,
         name: 'Login Lounge',
-        slug: "Login-Lounge",
+        slug: "login-lounge",
         location: "Camberley",
         address: "1 High St, Camberley, GU15 3SY",
         image: "/img/cafe-img-1.jpg",
         ratings: {
-            overall: 4,
-            flatWhite: 5,
-            cappuccino: 4,
-            americano: 4,
+            overall: undefined,
+            flatWhite: 1,
+            cappuccino: 2,
+            americano: 3,
             doubleEspresso: 3,
-            icedLatte: 4
+            icedLatte: 2
         },
         comments: [
             {  
@@ -36,12 +36,12 @@ export const cafes: Cafe[] = [
     {
         id: 2,
         name: 'Mullans',
-        slug: "Mullans",
+        slug: "mullans",
         location: "Camberley",
         address: "34 High St, Camberley, GU15 3SY",
         image: "/img/cafe-img-1.jpg",
         ratings: {
-            overall: 4,
+            overall: undefined,
             flatWhite: 4,
             cappuccino: 5,
             americano: 4,
@@ -68,12 +68,12 @@ export const cafes: Cafe[] = [
         {
         id: 3,
         name: 'The Bear',
-        slug: "The-Bear",
+        slug: "the-bear",
         location: "Camberley",
         address: "10 High St, Camberley, GU15 3SY",
         image: "/img/cafe-img-1.jpg",
         ratings: {
-            overall: 4,
+            overall: undefined,
             flatWhite: 4,
             cappuccino: 3,
             americano: 4,

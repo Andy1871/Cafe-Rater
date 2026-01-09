@@ -1,7 +1,7 @@
 export type DrinkKey = "flatWhite" | "cappuccino" | "americano" | "doubleEspresso" | "icedLatte";
 
 export type RatingsSummary = {
-    overall: number;
+    overall: number | undefined;
 } & Record<DrinkKey, number>;
 
 export type CafeComment = {
