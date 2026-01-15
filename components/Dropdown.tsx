@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 
 type DropdownProps<T extends string> = {
@@ -18,6 +19,7 @@ export default function Dropdown<T extends string>({
   placeholder,
 }: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   function toggleOption(option: T) {
     const allOption = options[0];
@@ -32,57 +34,76 @@ export default function Dropdown<T extends string>({
     if (isAll) {
       next = hasAllSelected ? [] : allRealOptions;
     } else {
-      next = isSelected
-        ? value.filter((v) => v !== option)
-        : [...value, option];
+      next = isSelected ? value.filter((v) => v !== option) : [...value, option];
     }
 
     onChange(next);
   }
 
-  let buttonText;
+  let buttonText: string | undefined;
   if (value.length === 0) {
     buttonText = placeholder;
   } else if (value.length === 1) {
     buttonText = value[0];
-  } else if (
-    value.length === options.length - 1 &&
-    !value.includes(options[0])
-  ) {
+  } else if (value.length === options.length - 1 && !value.includes(options[0])) {
     buttonText = `All ${label}s`;
   } else {
     buttonText = `${value.length} ${label}s`;
   }
 
+  // Close on click outside
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function onDocClick(e: MouseEvent) {
+      const target = e.target as Node;
+      if (rootRef.current && !rootRef.current.contains(target)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [isOpen]);
+
   return (
-    <div className="relative inline-block text-left">
+    <div ref={rootRef} className="relative w-full text-left">
+      <div className="mb-1 px-1 text-xs font-medium text-zinc-400">
+        {label}
+      </div>
+
       <button
         type="button"
-        className="inline-flex items-center justify-between w-56 rounded-md border border-gray-300 shadow-sm px-4 bg-white text-sm font-medium text-black hover:bg-gray-50 h-10"
+        className="inline-flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/4 px-4 py-2 text-sm font-medium text-zinc-100 shadow-sm transition hover:bg-white/6 focus:outline-none focus:ring-2 focus:ring-violet-500/40"
         onClick={() => setIsOpen((v) => !v)}
+        aria-expanded={isOpen}
       >
-        <span className="truncate">{buttonText}</span>
-        <FaCaretDown className="ml-2 shrink-0" />
+        <span className="truncate text-zinc-100">
+          {buttonText ?? "Select"}
+        </span>
+        <FaCaretDown className={`ml-2 shrink-0 text-white/70 transition ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black/5 focus:outline-none z-50">
-          <ul className="py-1">
+        <div className="absolute left-0 mt-2 w-full rounded-2xl border border-white/10 bg-zinc-950/95 shadow-2xl shadow-black/30 ring-1 ring-black/20 z-50 overflow-hidden">
+          <ul className="max-h-64 overflow-auto py-1">
             {options.map((option) => {
               const isSelected = value.includes(option);
               return (
                 <li
                   key={option}
                   className={[
-                    "cursor-pointer px-4 py-2 text-sm text-black hover:bg-gray-100 flex justify-between",
-                    isSelected && "bg-gray-100",
+                    "cursor-pointer px-4 py-2 text-sm text-zinc-100 hover:bg-white/6 flex items-center justify-between",
+                    isSelected ? "bg-white/6" : "",
                   ].join(" ")}
-                  onClick={() => {
-                    toggleOption(option);
-                  }}
+                  onClick={() => toggleOption(option)}
                 >
                   <span className="truncate">{option}</span>
-                  {isSelected && <span aria-hidden>✓</span>}
+                  {isSelected && (
+                    <span className="text-xs text-violet-300" aria-hidden>
+                      ✓
+                    </span>
+                  )}
                 </li>
               );
             })}

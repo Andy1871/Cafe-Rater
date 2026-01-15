@@ -28,6 +28,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased page-container`}
       >
         {children}
+        <div id="modal-portal" />
       </body>
     </html>
   );
