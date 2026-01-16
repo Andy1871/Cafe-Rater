@@ -1,7 +1,7 @@
+@config "../tailwind.config.ts";
 @import "tailwindcss";
 @import "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
-
 
 :root {
   --background: #ffffff;
@@ -15,18 +15,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  @apply font-sans text-[#111];
+  @apply font-sans;
   margin: 0;
   padding: 0;
 }
@@ -36,4 +34,3 @@ body {
   @apply mx-auto max-w-200 px-6 py-10;
 }
 } */
-

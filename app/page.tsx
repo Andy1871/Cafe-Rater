@@ -42,7 +42,7 @@ export default function Home() {
     <>
       <main className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-rose-50 text-zinc-900 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900 dark:text-zinc-100">
         {/* Hero */}
-        <section className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-14">
+        <section className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-14 relative z-50">
           <div className="relative rounded-2xl border border-amber-200/70 bg-white/60 p-6 shadow-sm backdrop-blur-sm sm:p-10 dark:border-white/10 dark:bg-white/3 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
             <div className="flex flex-col items-center text-center gap-4">
               <div className="absolute right-4 top-4">

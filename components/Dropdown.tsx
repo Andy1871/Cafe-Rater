@@ -89,9 +89,10 @@ export default function Dropdown<T extends string>({
         />
       </button>
 
+      {/* Dropdown menu - CAN I SORT CAFES & LOCATIONS INTO ALPHABETICAL ORDER - WITHOUT AFFECTING RATINGS*/}
       {isOpen && (
         <div className="absolute left-0 mt-2 w-full overflow-hidden rounded-2xl border border-amber-200/70 bg-white/90 shadow-xl ring-1 ring-black/5 z-50 dark:border-white/10 dark:bg-zinc-950/95 dark:shadow-2xl dark:shadow-black/30 dark:ring-black/20">
-          <ul className="max-h-64 overflow-auto py-1">
+          <ul className="max-h-100 overflow-auto py-1"> 
             {options.map((option) => {
               const isSelected = value.includes(option);
               return (
