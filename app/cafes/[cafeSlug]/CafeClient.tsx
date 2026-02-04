@@ -3,13 +3,51 @@
 import Image from "next/image";
 import { RatingStars } from "@/components/Stars";
 import { useState } from "react";
-import type { Cafe, CafeComment } from "@/lib/types";
+import type { Cafe } from "@/lib/types";
+import { formatAddress } from "@/lib/helpers";
+import CafeComments from "@/components/CafeComments";
+import { HomeIcon } from "@/components/HomeIcon";
+import { useRouter } from "next/navigation";
 
 function DrinkIcon({ d }: { d: string }) {
   return (
-    <svg className="w-7 h-7 fill-amber-900/40 dark:fill-white/60" viewBox="0 0 24 24" aria-hidden>
+    <svg
+      className="w-7 h-7 fill-amber-900/40 dark:fill-white/60"
+      viewBox="0 0 24 24"
+      aria-hidden
+    >
       <path d={d} />
     </svg>
+  );
+}
+
+function BackArrow() {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => {
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push("/");
+        }
+      }}
+      className="inline-flex items-center gap-2 text-sm text-amber-900/70 hover:text-amber-900 dark:text-white/60 hover:dark:text-white hover:cursor-pointer"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden
+        className="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M19 12H5" />
+        <path d="M12 19l-7-7 7-7" />
+      </svg>
+    </button>
   );
 }
 
@@ -22,8 +60,7 @@ export default function CafeClient({ cafe }: { cafe: Cafe }) {
     icedLatte: cafe.ratings.icedLatte,
   });
 
-  const [comments, setComments] = useState<CafeComment[]>(cafe.comments);
-  const [newComment, setNewComment] = useState<string>("");
+  const formattedAddresses = formatAddress(cafe.address);
 
   function handleStarClick(drink: keyof typeof drinkRating, value: number) {
     setDrinkRating((prevRatings) => ({
@@ -34,36 +71,16 @@ export default function CafeClient({ cafe }: { cafe: Cafe }) {
 
   const drinkValues = Object.values(drinkRating);
   const averageRating = Math.round(
-    drinkValues.reduce((a, b) => a + b, 0) / drinkValues.length
+    drinkValues.reduce((a, b) => a + b, 0) / drinkValues.length,
   );
-
-  function handleSubmitComment() {
-    if (newComment.trim() === "") return;
-
-    const comment: CafeComment = {
-      id: Date.now(),
-      author: "Anonymous",
-      title: "No Title",
-      content: newComment,
-      date: new Date().toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-
-    setComments((prevComments) => [comment, ...prevComments]);
-    setNewComment("");
-  }
 
   return (
     <main className="min-h-screen bg-linear-to-b from-amber-50 via-orange-50 to-rose-50 text-zinc-900 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900 dark:text-zinc-100">
       <div className="mx-auto max-w-4xl px-4 py-10">
         <div className="rounded-2xl border border-amber-200/70 bg-white/60 p-5 shadow-sm backdrop-blur-sm sm:p-8 dark:border-white/10 dark:bg-white/3 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+          <BackArrow />
           {/* Header */}
-          <header className="flex flex-col items-start gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <header className="mt-4 flex flex-col items-start gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
                 {cafe.name}
@@ -90,7 +107,9 @@ export default function CafeClient({ cafe }: { cafe: Cafe }) {
                 Address
               </div>
               <div className="mt-2 text-sm text-zinc-900 dark:text-zinc-200">
-                {cafe.address}
+                {formattedAddresses.map((line, index) => (
+                  <div key={index}>{line}</div>
+                ))}
               </div>
 
               <div className="mt-4 flex items-center gap-2">
@@ -122,7 +141,7 @@ export default function CafeClient({ cafe }: { cafe: Cafe }) {
               </div>
             </div>
 
-            <ul className="mt-4 grid grid-cols-1 gap-3">
+            <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
               <li className="flex items-center justify-between rounded-2xl border border-amber-200/70 bg-white/70 p-3 sm:p-4 dark:border-white/10 dark:bg-white/3">
                 <div className="flex items-center gap-3">
                   <div className="grid place-items-center rounded-xl border border-amber-200/70 bg-amber-50/60 p-2 dark:border-white/10 dark:bg-white/4">
@@ -191,52 +210,7 @@ export default function CafeClient({ cafe }: { cafe: Cafe }) {
           </section>
 
           {/* Comments */}
-          <section className="mt-10">
-            <div className="flex items-end justify-between">
-              <h3 className="text-lg font-semibold">Comments</h3>
-              <div className="text-xs text-zinc-700 dark:text-zinc-400">
-                {comments.length} total
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-3">
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="rounded-2xl border border-amber-200/70 bg-white/70 p-4 dark:border-white/10 dark:bg-white/3"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <strong className="text-sm">{comment.author}</strong>
-                    <div className="text-xs text-zinc-700 dark:text-zinc-400">
-                      {comment.title}
-                    </div>
-                  </div>
-                  <div className="mt-2 text-sm text-zinc-800 dark:text-zinc-200">
-                    {comment.content}
-                  </div>
-                  <div className="mt-3 text-right text-[11px] text-zinc-600 dark:text-zinc-500">
-                    [{comment.date}]
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Leave a comment..."
-                aria-label="Leave a comment"
-                className="min-h-24 flex-1 resize-y rounded-xl border border-amber-200/70 bg-white/80 p-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-300/60 dark:border-white/10 dark:bg-white/3 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:ring-violet-500/40"
-              />
-              <button
-                onClick={handleSubmitComment}
-                className="rounded-xl bg-amber-600/90 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-300/60 dark:bg-violet-500/90 dark:hover:bg-violet-500 dark:focus:ring-violet-500/40"
-              >
-                Submit
-              </button>
-            </div>
-          </section>
+          <CafeComments initialComments={cafe.comments} />
         </div>
       </div>
     </main>

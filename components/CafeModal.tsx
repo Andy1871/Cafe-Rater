@@ -2,6 +2,7 @@ import { Cafe } from "@/lib/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
+import { formatAddress } from "@/lib/helpers";
 
 export type CafeModalProps = {
   isOpen: boolean;
@@ -20,6 +21,8 @@ export function CafeModal({ isOpen, onClose, cafe }: CafeModalProps) {
     if (typeof window === "undefined") return null;
     return document.getElementById("modal-portal") ?? document.body;
   }, []);
+
+  const formattedAddresses = formatAddress(cafe?.address || "");
 
   useEffect(() => {
     if (isOpen) {
@@ -130,10 +133,12 @@ export function CafeModal({ isOpen, onClose, cafe }: CafeModalProps) {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-xl border border-amber-200/70 bg-amber-50/60 p-3 dark:border-white/10 dark:bg-white/3">
                   <div className="text-xs uppercase tracking-wide text-amber-900/60 dark:text-zinc-400">
-                    Location
+                    Address
                   </div>
                   <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    {cafe.location}
+                    {formattedAddresses.map((line, index) => (
+                      <div key={index}>{line}</div>
+                    ))}
                   </div>
                 </div>
 
